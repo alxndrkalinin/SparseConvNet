@@ -16,9 +16,26 @@ DeepC2Triangular::DeepC2Triangular(int dimension, int l, int k,
                                    int nClasses, float p, int cudaDevice,
                                    int nTop)
     : SparseConvTriangLeNet(dimension, nInputFeatures, nClasses, cudaDevice, nTop) {
-  for (int i = 0; i <= l; i++)
-    addLeNetLayerMP((i + 1) * k, (i == l) ? 2 : 2, 1, (i < l) ? 3 : 1,
-                              (i < l) ? 2 : 1, fn, p * i * 1.0f / l);
+//  for (int i = 0; i <= l; i++)
+//    addLeNetLayerMP((i + 1) * k, (i == l) ? 2 : 2, 1, (i < l) ? 3 : 1,
+//                              (i < l) ? 2 : 1, fn, p * i * 1.0f / l);
+  // addTriangularLeNetLayerMP(nFeatures, filterSize, filterStride, poolSize, poolStride, activationFn, dropout, minActiveInputs);
+  addLeNetLayerMP(k, 3, 1, 1, 1, fn, 0); // no pooling
+  addLeNetLayerMP(2 * k, 3, 1, 2, 2, fn, p * 1.0f / l);
+  addLeNetLayerMP(3 * k, 3, 1, 1, 1, fn, p * 2.0f / l); // no pooling
+  addLeNetLayerMP(4 * k, 3, 1, 2, 2, fn, p * 3.0f / l);
+  addLeNetLayerMP(5 * k, 3, 1, 1, 1, fn, p * 4.0f / l); // no pooling
+  addLeNetLayerMP(6 * k, 3, 1, 1, 1, fn, p * 5.0f / l); // no pooling
+  addLeNetLayerMP(7 * k, 3, 1, 2, 2, fn, p * 6.0f / l);
+  addLeNetLayerMP(8 * k, 3, 1, 1, 1, fn, p * 7.0f / l); // no pooling
+  addLeNetLayerMP(9 * k, 3, 1, 1, 1, fn, p * 8.0f / l); // no pooling
+  addLeNetLayerMP(10 * k, 3, 1, 2, 2, fn, p * 9.0f / l);
+  addLeNetLayerMP(11 * k, 3, 1, 1, 1, fn, p * 10.0f / l); // no pooling
+  addLeNetLayerMP(12 * k, 3, 1, 1, 1, fn, p * 11.0f / l); // no pooling
+  addLeNetLayerMP(13 * k, 1, 1, 1, 1, fn, p * 12.0f / l);
+  addLeNetLayerMP(14 * k, 1, 1, 1, 1, fn, p * 13.0f / l);
+//  addLeNetLayerMP(15 * k, 1, 1, 1, 1, fn, p * 13.0f / l);
+
   addSoftmaxLayer();
 }
 
