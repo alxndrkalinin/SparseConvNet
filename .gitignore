@@ -20,3 +20,4 @@ old/
 Data/plankton-JO-2/
 .cproject
 .project
+weights/*
