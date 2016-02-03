@@ -280,6 +280,8 @@ float SparseConvNetCUDA::processDataset(SpatiallySparseDataset &dataset,
     f.open("unlabelledData.predictions");
     g.open("unlabelledData.probabilities");
   }
+  
+  std::cout << " Learning rate: " << learningRate << " Momentum: " << momentum << std::endl;
   while (SpatiallySparseBatch *batch = bp.nextBatch()) {
     processBatch(*batch, learningRate, momentum, f, g);
     errorRate += batch->mistakes * 1.0 / dataset.pictures.size();

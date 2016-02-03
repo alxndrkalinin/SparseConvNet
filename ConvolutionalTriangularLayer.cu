@@ -15,6 +15,8 @@ ConvolutionalTriangularLayer::ConvolutionalTriangularLayer(
       nFeaturesIn(nFeaturesIn), minActiveInputs(minActiveInputs) {
   fs = triangleSize(filterSize, dimension);
   nFeaturesOut = fs * nFeaturesIn;
+  std::cout << "filter size=" << filterSize
+            << " " << "dimension=" << dimension << " " << "fs=" << fs;
   std::cout << dimension
             << "D ConvolutionalTriangularLayer side-length=" << filterSize
             << " " << nFeaturesIn << "x" << fs << "->" << nFeaturesOut;
