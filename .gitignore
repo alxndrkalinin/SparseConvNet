@@ -21,3 +21,7 @@ Data/plankton-JO-2/
 .cproject
 .project
 weights/*
+Data/Fibroblast/*.off
+Data/Fibroblast/*.zip
+shrec2015triangular
+fibroblastTriangular
