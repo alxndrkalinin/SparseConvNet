@@ -8,7 +8,8 @@
 
 __global__ void dGradientDescentShrunkMatrixNoMomentum(
     float *d_delta, float *d_weights, int nOut, int nOutDropout,
-    int *inFeaturesPresent, int *outFeaturesPresent, float learningRate) {
+    int *inFeaturesPresent, int *outFeaturesPresent, float learningRate,
+    float momentum) {
   int i = blockIdx.x * nOutDropout;
   int ii = inFeaturesPresent[blockIdx.x] * nOut;
   for (int j = threadIdx.x; j < nOutDropout; j += KERNELBLOCKSIZE) {
@@ -93,7 +94,7 @@ void IndexLearnerLayer::backwards(SpatiallySparseBatch &batch,
               memStream.stream>>>
       (dw.dPtr(), W.dPtr(), output.nFeatures, output.featuresPresent.size(),
        input.featuresPresent.dPtr(), output.featuresPresent.dPtr(),
-       learningRate);
+       learningRate, momentum);
   cudaCheckError();
 }
 void IndexLearnerLayer::loadWeightsFromStream(std::ifstream &f, bool momentum) {
