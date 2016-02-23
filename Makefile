@@ -43,6 +43,9 @@ cifar10triangular: $(OBJCVT) SpatiallySparseDatasetCIFAR10.o cifar10triangular.o
 
 shrec2015triangular: $(OBJ) Off3DFormatTriangularPicture.o SpatiallySparseDatasetSHREC2015.o shrec2015triangular.o
 	$(NVCC) -o shrec2015triangular $(OBJ) Off3DFormatTriangularPicture.o SpatiallySparseDatasetSHREC2015.o shrec2015triangular.o $(LIBS) $(NVCCFLAGS)
+	
+fibroblastTriangular: $(OBJ) Off3DFormatTriangularPicture.o SpatiallySparseDatasetFibroblast.o fibroblastTriangular.o
+	$(NVCC) -o fibroblastTriangular $(OBJ) Off3DFormatTriangularPicture.o SpatiallySparseDatasetFibroblast.o fibroblastTriangular.o $(LIBS) $(NVCCFLAGS)
 
 cvap_rha: $(OBJ) CVAP_RHA_Picture.o SpatiallySparseDatasetCVAP_RHA.o cvap_rha.o
 	$(NVCC) -o cvap_rha $(OBJ) CVAP_RHA_Picture.o SpatiallySparseDatasetCVAP_RHA.o cvap_rha.o $(LIBS) $(NVCCFLAGS)
