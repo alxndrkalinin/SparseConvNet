@@ -89,6 +89,7 @@ __global__ void dColumnSum(float *matrix, float *target, int nRows,
     t += matrix[j * nColumns + i];
   atomicAdd(&target[i], t);
 }
+
 void columnSum(float *matrix, float *target, int nRows, int nColumns,
                cudaMemStream &memStream) {
   if (nColumns / KERNELBLOCKSIZE > 0)
@@ -109,6 +110,7 @@ __global__ void dReplicateArray(float *src, float *dst, int nColumns) {
   for (int j = threadIdx.x; j < nColumns; j += KERNELBLOCKSIZE)
     dst[i + j] = src[j];
 }
+
 void replicateArray(float *src, float *dst, int nRows, int nColumns,
                     cudaMemStream &memStream) {
   int processed = 0;

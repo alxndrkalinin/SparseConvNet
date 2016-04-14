@@ -19,6 +19,13 @@ enum ActivationFunction {
   PRELU,
   SIGMOID
 };
+
+enum BatchNormalizationMode {
+	NOBN,
+	GLOBAL,
+	RUNNING
+};
+
 #ifdef TYPES_CPP
 const char *sigmoidNames[] = {"", "ReLU", "VeryLeakyReLU", "LeakyReLU", "tanh",
                               "Softmax Classification", "PReLU", "Sigmoid"};

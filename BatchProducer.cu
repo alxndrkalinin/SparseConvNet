@@ -62,6 +62,19 @@ void BatchProducer::preprocessBatch(int c, int cc, RNG &rng) {
   assert(cnn.batchPool[cc].interfaces[0].sub->features.size() ==
          cnn.batchPool[cc].interfaces[0].nFeatures *
              cnn.batchPool[cc].interfaces[0].nSpatialSites);
+
+  // TODO: compute batch mean and variance for BN
+  // http://stackoverflow.com/a/7616783/1237809
+  std::vector<float> &features =
+          cnn.batchPool[cc].interfaces[0].sub->features.hVector();
+  float sum = std::accumulate(features.begin(), features.end(), 0.0f);
+  cnn.batchPool[cc].interfaces[0].batchMean = sum / features.size();
+  std::vector<float> diff(features.size());
+  std::transform(features.begin(), features.end(), diff.begin(), [mean](float x) { return x - mean; });
+  float sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0f);
+  float stdev = std::sqrt(sq_sum / v.size());
+  cnn.batchPool[cc].interfaces[0].batchVar = std::sqrt(0.0001f + std::pow(stdev, 2.0f));
+
   if (cnn.inputNormalizingConstants.size() > 0) {
     std::vector<float> &features =
         cnn.batchPool[cc].interfaces[0].sub->features.hVector();

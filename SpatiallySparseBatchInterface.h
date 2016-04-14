@@ -19,6 +19,8 @@ public:
 class SpatiallySparseBatchInterface {
 public:
   SpatiallySparseBatchSubInterface *sub;
+  float batchMean;
+  float batchVar;
   int nFeatures; // Features per spatial location
   vectorCUDA<int>
       featuresPresent; // Not dropped out features per spatial location
