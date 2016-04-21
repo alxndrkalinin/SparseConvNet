@@ -15,6 +15,7 @@ public:
   ~OffSurfaceModelPicture();
   void normalize(); // Fit centrally in the cube [-scale_n/2,scale_n/2]^3
   void random_rotation(RNG &rng);
+  void uniform_random_rotation(RNG &rng);
   void jiggle(RNG &rng, float alpha);
   void affineTransform(RNG &rng, float alpha);
   void codifyInputData(SparseGrid &grid, std::vector<float> &features,

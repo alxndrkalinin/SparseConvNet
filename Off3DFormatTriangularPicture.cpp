@@ -87,6 +87,35 @@ void OffSurfaceModelPicture::random_rotation(RNG &rng) {
   points = points * Q;
 }
 
+// Arvo, James. "Fast random rotation matrices." (1992).
+void OffSurfaceModelPicture::uniform_random_rotation(RNG &rng) {
+  arma::mat I = arma::eye<arma::mat>(3, 3);
+  arma::mat R, H, M;
+  arma::rowvec v(3);
+
+  // compute R matrix
+  float x1 = rng.uniform(0, 1);
+  R = I;
+  R(0, 0) = R(1, 1) = cos(2 * M_PI * x1);
+  R(0, 1) = sin(2 * M_PI * x1);
+  R(1, 0) = - R(0, 1);
+
+  // compute v vector
+  float x2 = rng.uniform(0, 1);
+  float x3 = rng.uniform(0, 1);
+  v(0) = cos(2 * M_PI * x2) * sqrt(x3);
+  v(1) = sin(2 * M_PI * x2) * sqrt(x3);
+  v(2) = sqrt(1 - sqrt(x3));
+
+  // compute H matrix
+  H = I - 2 * (v * v.t());
+
+  // compute M matrix
+  M = - (H * R);
+
+  points = points * M;
+}
+
 void OffSurfaceModelPicture::jiggle(RNG &rng, float alpha) {
   for (int i = 0; i < 3; i++)
     points.col(i) += renderSize * rng.uniform(-alpha, alpha);
@@ -130,12 +159,12 @@ arma::mat convPyrCub =
 
 Picture *OffSurfaceModelPicture::distort(RNG &rng, batchType type) {
   OffSurfaceModelPicture *pic = new OffSurfaceModelPicture(*this);
-  pic->random_rotation(rng);
+  pic->uniform_random_rotation(rng);
   pic->normalize();
-  if (type == TRAINBATCH) {
-    pic->affineTransform(rng, 0.2);
-    pic->jiggle(rng, 0.2);
-  }
+//  if (type == TRAINBATCH) {
+//    pic->affineTransform(rng, 0.2);
+//    pic->jiggle(rng, 0.2);
+//  }
   pic->points = pic->points * convPyrCub;
   return pic;
 }
