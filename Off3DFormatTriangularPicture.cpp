@@ -91,7 +91,7 @@ void OffSurfaceModelPicture::random_rotation(RNG &rng) {
 void OffSurfaceModelPicture::uniform_random_rotation(RNG &rng) {
   arma::mat I = arma::eye<arma::mat>(3, 3);
   arma::mat R, H, M;
-  arma::rowvec v(3);
+  arma::colvec v(3);
 
   // compute R matrix
   float x1 = rng.uniform(0, 1);
