@@ -45,9 +45,11 @@ for cellClass in "${cellClasses[@]}"; do
 						nucleolusPath="$nucleoliPath/$run/$nucleolus"
 						if [[ -z $mergedNucleusPath ]]; then
 							mergedNucleusPath="$mergedRunPath/${nucleusName}_merged.off"
-							echo "$nucleolusPath + $nucleusPath ==> $mergedNucleusPath"
+							# echo "$nucleolusPath + $nucleusPath ==> $mergedNucleusPath"
+							python merge_off.py $nucleolusPath $nucleusPath $mergedNucleusPath
 						else
-							echo "$nucleolusPath + $mergedNucleusPath ==> $mergedNucleusPath"
+							# echo "$nucleolusPath + $mergedNucleusPath ==> $mergedNucleusPath"
+							python merge_off.py $nucleolusPath $mergedNucleusPath $mergedNucleusPath
 						fi
 					fi
 				done
