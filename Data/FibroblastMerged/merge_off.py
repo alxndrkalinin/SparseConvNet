@@ -39,7 +39,7 @@ def merge_off(file1, file2, output):
         off2_v, off2_f = read_off(off2)
 
         off_v = np.vstack((off1_v, off2_v))
-        off2_f_renum = [[x + len(off1_v) for x in off2_f[i]] for i in xrange(len(off2_v))]
+        off2_f_renum = [[x + len(off1_v) for x in off2_f[i]] for i in xrange(len(off2_f))]
         off_f = np.vstack((off1_f, off2_f_renum))
 
         print('... into %s' % output)
