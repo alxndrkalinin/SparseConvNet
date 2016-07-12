@@ -33,7 +33,7 @@ def write_off(filename, verts, faces):
 def merge_off(file1, file2, output):
     with open(file1, 'r') as off1, open(file2, 'r') as off2:
 
-        print('Merging %s mesh and %s mesh...' % (file1, file2))
+        # print('Merging %s mesh and %s mesh...' % (file1, file2))
 
         off1_v, off1_f = read_off(off1)
         off2_v, off2_f = read_off(off2)
@@ -42,10 +42,10 @@ def merge_off(file1, file2, output):
         off2_f_renum = [[x + len(off1_v) for x in off2_f[i]] for i in xrange(len(off2_f))]
         off_f = np.vstack((off1_f, off2_f_renum))
 
-        print('... into %s' % output)
+        # print('... into %s' % output)
 
         write_off(output, off_v, off_f)
-        print('Done.')
+        # print('Done.')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Merging 2 meshes in .OFF format into one')
