@@ -37,6 +37,7 @@ for cellClass in "${cellClasses[@]}"; do
 				nucleusPath="$nucleiPath/$run/$nucleus"
 				# echo "===========$nucleusName============="
 				mergedNucleusPath=""
+				haveNuclei=""
 
 				for nucleolus in "${nucleoli[@]}"; do
 					# echo "-----$nucleolus-----"
@@ -44,19 +45,24 @@ for cellClass in "${cellClasses[@]}"; do
 
 					if [[ $nucleolusName == *$nucleusName* ]]; then
 						nucleolusPath="$nucleoliPath/$run/$nucleolus"
+						haveNuclei="yes"
 
 						if [[ -z $mergedNucleusPath ]]; then
 							mergedNucleusPath="$mergedRunPath/${nucleusName}_merged.off"
 							arglist="$nucleolusPath $nucleusPath $mergedNucleusPath"
 
-							python merge_off.py $arglist
+							# python merge_off.py $arglist
 						else
 							# echo "$nucleolusPath + $mergedNucleusPath ==> $mergedNucleusPath"
 							arglist="$nucleolusPath $mergedNucleusPath $mergedNucleusPath"
-							python merge_off.py $arglist
+							# python merge_off.py $arglist
 						fi
 					fi
 				done
+
+				if [[ -z $haveNuclei ]]; then
+					echo "no nucleoli found for: $nucleusName"
+				fi
 			done
 		done
 	else
