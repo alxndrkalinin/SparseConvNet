@@ -1,5 +1,7 @@
 /confusionMatrix
 *.o
+*.dSYM
+.DS_Store
 cifar10
 cifar100
 cifar10triangular
@@ -20,6 +22,7 @@ old/
 Data/plankton-JO-2/
 .cproject
 .project
+.settings
 weights/*
 Data/Fibroblast/*.off
 Data/Fibroblast/*.zip
