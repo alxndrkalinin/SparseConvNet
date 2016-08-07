@@ -13,44 +13,49 @@ void SparseConvNet::addLeNetLayerMP(int nFeatures, int filterSize,
                                     int filterStride, int poolSize,
                                     int poolStride,
                                     ActivationFunction activationFn,
+                                    BatchNorm batchNorm,
                                     float dropout, int minActiveInputs) {
   cnn->addLeNetLayerMP(nFeatures, filterSize, filterStride, poolSize,
-                       poolStride, activationFn, dropout, minActiveInputs);
+                       poolStride, activationFn, batchNorm, dropout, minActiveInputs);
 }
 
 void SparseConvNet::addLeNetLayerPOFMP(int nFeatures, int filterSize,
                                        int filterStride, int poolSize,
                                        float fmpShrink,
                                        ActivationFunction activationFn,
+                                       BatchNorm batchNorm,
                                        float dropout, int minActiveInputs) {
   cnn->addLeNetLayerPOFMP(nFeatures, filterSize, filterStride, poolSize,
-                          fmpShrink, activationFn, dropout, minActiveInputs);
+                          fmpShrink, activationFn, batchNorm, dropout, minActiveInputs);
 }
 
 void SparseConvNet::addLeNetLayerROFMP(int nFeatures, int filterSize,
                                        int filterStride, int poolSize,
                                        float fmpShrink,
                                        ActivationFunction activationFn,
+                                       BatchNorm batchNorm,
                                        float dropout, int minActiveInputs) {
   cnn->addLeNetLayerROFMP(nFeatures, filterSize, filterStride, poolSize,
-                          fmpShrink, activationFn, dropout, minActiveInputs);
+                          fmpShrink, activationFn, batchNorm, dropout, minActiveInputs);
 }
 void SparseConvNet::addLeNetLayerPDFMP(int nFeatures, int filterSize,
                                        int filterStride, int poolSize,
                                        float fmpShrink,
                                        ActivationFunction activationFn,
+                                       BatchNorm batchNorm,
                                        float dropout, int minActiveInputs) {
   cnn->addLeNetLayerPDFMP(nFeatures, filterSize, filterStride, poolSize,
-                          fmpShrink, activationFn, dropout, minActiveInputs);
+                          fmpShrink, activationFn, batchNorm, dropout, minActiveInputs);
 }
 
 void SparseConvNet::addLeNetLayerRDFMP(int nFeatures, int filterSize,
                                        int filterStride, int poolSize,
                                        float fmpShrink,
                                        ActivationFunction activationFn,
+                                       BatchNorm batchNorm,
                                        float dropout, int minActiveInputs) {
   cnn->addLeNetLayerRDFMP(nFeatures, filterSize, filterStride, poolSize,
-                          fmpShrink, activationFn, dropout, minActiveInputs);
+                          fmpShrink, activationFn, batchNorm, dropout, minActiveInputs);
 }
 
 void SparseConvNet::addTerminalPoolingLayer(int poolSize) {
@@ -113,10 +118,11 @@ void SparseConvTriangLeNet::addLeNetLayerMP(int nFeatures, int filterSize,
                                             int filterStride, int poolSize,
                                             int poolStride,
                                             ActivationFunction activationFn,
+                                            BatchNorm batchNorm,
                                             float dropout,
                                             int minActiveInputs) {
   cnn->addTriangularLeNetLayerMP(nFeatures, filterSize, filterStride, poolSize,
-                                 poolStride, activationFn, dropout,
+                                 poolStride, activationFn, batchNorm, dropout,
                                  minActiveInputs);
 }
 

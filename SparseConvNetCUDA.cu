@@ -8,7 +8,7 @@
 #include <algorithm>
 #include "utilities.h"
 #include "SigmoidLayer.h"
-#include "NetworkInNetworkLayer.h"
+#include "NetworkInNetworkBNLayer.h"
 #include "NetworkInNetworkPReLULayer.h"
 #include "ConvolutionalLayer.h"
 #include "ReallyConvolutionalLayer.h"
@@ -49,6 +49,7 @@ SparseConvNetCUDA::~SparseConvNetCUDA() {
 }
 void SparseConvNetCUDA::addLearntLayer(int nFeatures,
                                        ActivationFunction activationFn,
+                                       BatchNorm batchNorm,
                                        float dropout, float alpha) {
   if (activationFn != SOFTMAX)
     nFeatures = std::max(KERNELBLOCKSIZE, intRound(nFeatures, KERNELBLOCKSIZE));
@@ -62,6 +63,10 @@ void SparseConvNetCUDA::addLearntLayer(int nFeatures,
   if (activationFn == PRELU)
     layers.push_back(new NetworkInNetworkPReLULayer(
         memStream, cublasHandle, nOutputFeatures, nFeatures, dropout, alpha));
+  else if (batchNorm == ON)
+    layers.push_back(new NetworkInNetworkBNLayer(memStream, cublasHandle,
+                                               nOutputFeatures, nFeatures,
+                                               dropout, activationFn, alpha));
   else
     layers.push_back(new NetworkInNetworkLayer(memStream, cublasHandle,
                                                nOutputFeatures, nFeatures,
@@ -69,12 +74,13 @@ void SparseConvNetCUDA::addLearntLayer(int nFeatures,
   nOutputFeatures = nFeatures;
 }
 void SparseConvNetCUDA::addNetworkInNetworkLayer(
-    int nFeatures, ActivationFunction activationFn, float dropout) {
-  addLearntLayer(nFeatures, activationFn, dropout, 1.0f);
+    int nFeatures, ActivationFunction activationFn, BatchNorm batchNorm, float dropout) {
+  addLearntLayer(nFeatures, activationFn, batchNorm, dropout, 1.0f);
 }
 void SparseConvNetCUDA::addConvolutionalLayer(int nFeatures, int filterSize,
                                               int filterStride,
                                               ActivationFunction activationFn,
+                                              BatchNorm batchNorm,
                                               float dropout,
                                               int minActiveInputs,
                                               float poolingToFollow) {
@@ -92,7 +98,7 @@ void SparseConvNetCUDA::addConvolutionalLayer(int nFeatures, int filterSize,
                                  nOutputFeatures, minActiveInputs));
       nOutputFeatures *= ipow(filterSize, dimension);
     }
-    addLearntLayer(nFeatures, activationFn, dropout,
+    addLearntLayer(nFeatures, activationFn, batchNorm, dropout,
                    powf(filterSize * 1.0 / filterStride / poolingToFollow, 2));
   }
 }
@@ -100,9 +106,10 @@ void SparseConvNetCUDA::addLeNetLayerMP(int nFeatures, int filterSize,
                                         int filterStride, int poolSize,
                                         int poolStride,
                                         ActivationFunction activationFn,
+                                        BatchNorm batchNorm,
                                         float dropout, int minActiveInputs) {
   addConvolutionalLayer(nFeatures, filterSize, filterStride, activationFn,
-                        dropout, minActiveInputs, poolSize);
+  		batchNorm, dropout, minActiveInputs, poolSize);
   if (poolSize > 1) {
     std::cout << layers.size() << ":";
     layers.push_back(
@@ -113,9 +120,10 @@ void SparseConvNetCUDA::addLeNetLayerROFMP(int nFeatures, int filterSize,
                                            int filterStride, int poolSize,
                                            float fmpShrink,
                                            ActivationFunction activationFn,
+                                           BatchNorm batchNorm,
                                            float dropout, int minActiveInputs) {
   addConvolutionalLayer(nFeatures, filterSize, filterStride, activationFn,
-                        dropout, minActiveInputs, fmpShrink);
+                        batchNorm, dropout, minActiveInputs, fmpShrink);
   if (fmpShrink > 1) {
     std::cout << layers.size() << ":";
     layers.push_back(new RandomOverlappingFractionalMaxPoolingLayer(
@@ -126,9 +134,10 @@ void SparseConvNetCUDA::addLeNetLayerPOFMP(int nFeatures, int filterSize,
                                            int filterStride, int poolSize,
                                            float fmpShrink,
                                            ActivationFunction activationFn,
+                                           BatchNorm batchNorm,
                                            float dropout, int minActiveInputs) {
   addConvolutionalLayer(nFeatures, filterSize, filterStride, activationFn,
-                        dropout, minActiveInputs, fmpShrink);
+                        batchNorm, dropout, minActiveInputs, fmpShrink);
   if (fmpShrink > 1) {
     std::cout << layers.size() << ":";
     layers.push_back(new PseudorandomOverlappingFractionalMaxPoolingLayer(
@@ -139,9 +148,10 @@ void SparseConvNetCUDA::addLeNetLayerRDFMP(int nFeatures, int filterSize,
                                            int filterStride, int poolSize,
                                            float fmpShrink,
                                            ActivationFunction activationFn,
+                                           BatchNorm batchNorm,
                                            float dropout, int minActiveInputs) {
   addConvolutionalLayer(nFeatures, filterSize, filterStride, activationFn,
-                        dropout, minActiveInputs, fmpShrink);
+                        batchNorm, dropout, minActiveInputs, fmpShrink);
   if (fmpShrink > 1) {
     std::cout << layers.size() << ":";
     layers.push_back(new RandomNonOverlappingFractionalMaxPoolingLayer(
@@ -152,9 +162,10 @@ void SparseConvNetCUDA::addLeNetLayerPDFMP(int nFeatures, int filterSize,
                                            int filterStride, int poolSize,
                                            float fmpShrink,
                                            ActivationFunction activationFn,
+                                           BatchNorm batchNorm,
                                            float dropout, int minActiveInputs) {
   addConvolutionalLayer(nFeatures, filterSize, filterStride, activationFn,
-                        dropout, minActiveInputs, fmpShrink);
+                        batchNorm, dropout, minActiveInputs, fmpShrink);
   if (fmpShrink > 1) {
     std::cout << layers.size() << ":";
     layers.push_back(new PseudorandomNonOverlappingFractionalMaxPoolingLayer(
@@ -164,7 +175,7 @@ void SparseConvNetCUDA::addLeNetLayerPDFMP(int nFeatures, int filterSize,
 
 void SparseConvNetCUDA::addTriangularConvolutionalLayer(
     int nFeatures, int filterSize, int filterStride,
-    ActivationFunction activationFn, float dropout, int minActiveInputs,
+    ActivationFunction activationFn, BatchNorm batchNorm, float dropout, int minActiveInputs,
     float poolingToFollow) {
   if (filterSize > 1) {
     std::cout << layers.size() << ":";
@@ -173,15 +184,15 @@ void SparseConvNetCUDA::addTriangularConvolutionalLayer(
         minActiveInputs));
     nOutputFeatures *= triangleSize(filterSize, dimension);
   }
-  addLearntLayer(nFeatures, activationFn, dropout,
+  addLearntLayer(nFeatures, activationFn, batchNorm, dropout,
                  powf(filterSize * 1.0 / filterStride / poolingToFollow, 2));
 }
 void SparseConvNetCUDA::addTriangularLeNetLayerMP(
     int nFeatures, int filterSize, int filterStride, int poolSize,
-    int poolStride, ActivationFunction activationFn, float dropout,
+    int poolStride, ActivationFunction activationFn, BatchNorm batchNorm, float dropout,
     int minActiveInputs) {
   addTriangularConvolutionalLayer(nFeatures, filterSize, filterStride,
-                                  activationFn, dropout, poolSize,
+                                  activationFn, batchNorm, dropout, poolSize,
                                   minActiveInputs);
   if (poolSize > 1) {
     std::cout << layers.size() << ":";
@@ -196,7 +207,7 @@ void SparseConvNetCUDA::addTerminalPoolingLayer(int poolSize, int S) {
 }
 
 void SparseConvNetCUDA::addSoftmaxLayer() {
-  addLearntLayer(nClasses, SOFTMAX, 0.0f, 1);
+  addLearntLayer(nClasses, SOFTMAX, OFF, 0.0f, 1);
   inputSpatialSize = 1;
   for (int i = layers.size() - 1; i >= 0; i--) {
     inputSpatialSize = layers[i]->calculateInputSpatialSize(inputSpatialSize);

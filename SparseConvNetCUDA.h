@@ -52,43 +52,53 @@ public:
                                 float momentum, std::ofstream &f);
 
   void addLearntLayer(int nFeatures, ActivationFunction activationFn = RELU,
+  										BatchNorm batchNorm = ON,
                       float dropout = 0.0f, float alpha = 1.0f);
   void addNetworkInNetworkLayer(int nFeatures,
                                 ActivationFunction activationFn = RELU,
+                                BatchNorm batchNorm = ON,
                                 float dropout = 0.0f);
   void addConvolutionalLayer(int nFeatures, int filterSize, int filterStride,
                              ActivationFunction activationFn = RELU,
+                             BatchNorm batchNorm = ON,
                              float dropout = 0.0f, int minActiveInputs = 1,
                              float poolingToFollow = 1.0f);
   void addLeNetLayerMP(int nFeatures, int filterSize, int filterStride,
                        int poolSize, int poolStride,
                        ActivationFunction activationFn = RELU,
+                       BatchNorm batchNorm = ON,
                        float dropout = 0.0f, int minActiveInputs = 1);
   void addLeNetLayerROFMP(int nFeatures, int filterSize, int filterStride,
                           int poolSize, float fmpShrink,
                           ActivationFunction activationFn = RELU,
+                          BatchNorm batchNorm = ON,
                           float dropout = 0.0f, int minActiveInputs = 1);
   void addLeNetLayerPOFMP(int nFeatures, int filterSize, int filterStride,
                           int poolSize, float fmpShrink,
                           ActivationFunction activationFn = RELU,
+                          BatchNorm batchNorm = ON,
                           float dropout = 0.0f, int minActiveInputs = 1);
   void addLeNetLayerRDFMP(int nFeatures, int filterSize, int filterStride,
                           int poolSize, float fmpShrink,
                           ActivationFunction activationFn = RELU,
+                          BatchNorm batchNorm = ON,
                           float dropout = 0.0f, int minActiveInputs = 1);
   void addLeNetLayerPDFMP(int nFeatures, int filterSize, int filterStride,
                           int poolSize, float fmpShrink,
                           ActivationFunction activationFn = RELU,
+                          BatchNorm batchNorm = ON,
                           float dropout = 0.0f, int minActiveInputs = 1);
   void addTriangularConvolutionalLayer(int nFeatures, int filterSize,
                                        int filterStride,
                                        ActivationFunction activationFn = RELU,
+                                       BatchNorm batchNorm = ON,
                                        float dropout = 0.0f,
                                        int minActiveInputs = 1,
                                        float poolingToFollow = 1.0f);
   void addTriangularLeNetLayerMP(int nFeatures, int filterSize,
                                  int filterStride, int poolSize, int poolStride,
                                  ActivationFunction activationFn = RELU,
+                                 BatchNorm batchNorm = ON,
                                  float dropout = 0.0f, int minActiveInputs = 1);
   void addSoftmaxLayer();
   void addTerminalPoolingLayer(int poolSize, int S);
