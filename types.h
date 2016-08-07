@@ -20,10 +20,9 @@ enum ActivationFunction {
   SIGMOID
 };
 
-enum BatchNormalizationMode {
-	NOBN,
-	GLOBAL,
-	RUNNING
+enum BatchNorm {
+	ON,
+	OFF
 };
 
 #ifdef TYPES_CPP
