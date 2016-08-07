@@ -3,16 +3,17 @@
 
 int epoch = 0;
 int cudaDevice = -1;
-int batchSize = 10;
+int batchSize = 1;
 
 class DeepC2Triangular : public SparseConvTriangLeNet {
 public:
-  DeepC2Triangular(int dimension, int l, int k, ActivationFunction fn,
+  DeepC2Triangular(int dimension, int l, int k, ActivationFunction fn, BatchNorm batchNorm,
                    int nInputFeatures, int nClasses, float p = 0.0f,
                    int cudaDevice = -1, int nTop = 1);
 };
 DeepC2Triangular::DeepC2Triangular(int dimension, int l, int k,
-                                   ActivationFunction fn, int nInputFeatures,
+                                   ActivationFunction fn, BatchNorm batchNorm,
+                                   int nInputFeatures,
                                    int nClasses, float p, int cudaDevice,
                                    int nTop)
     : SparseConvTriangLeNet(dimension, nInputFeatures, nClasses, cudaDevice, nTop) {
@@ -22,25 +23,26 @@ DeepC2Triangular::DeepC2Triangular(int dimension, int l, int k,
   
   // VGG-like
   // addTriangularLeNetLayerMP(nFeatures, filterSize, filterStride, poolSize, poolStride, activationFn, dropout, minActiveInputs);
-  addLeNetLayerMP(k, 3, 1, 1, 1, fn, 0.0f); // no pooling, no dropout
-  addLeNetLayerMP(k, 3, 1, 2, 2, fn, 0.0f); // max-pooling + dropout
-  addLeNetLayerMP(2 * k, 3, 1, 1, 1, fn, 0.0f); // no pooling, no dropout
-  addLeNetLayerMP(2 * k, 3, 1, 2, 2, fn, 0.0f); // max-pooling + dropout
-  addLeNetLayerMP(4 * k, 3, 1, 1, 1, fn, 0.0f); // no pooling, no dropout
-  addLeNetLayerMP(4 * k, 3, 1, 1, 1, fn, 0.0f); // no pooling, no dropout
-  addLeNetLayerMP(4 * k, 3, 1, 2, 2, fn, 0.0f); // max-pooling + dropout
-  addLeNetLayerMP(5 * k, 3, 1, 1, 1, fn, 0.0f); // no pooling, no dropout
-  addLeNetLayerMP(5 * k, 3, 1, 1, 1, fn, 0.0f); // no pooling, no dropout
-  addLeNetLayerMP(5 * k, 3, 1, 2, 2, fn, 0.1f); // max-pooling + dropout
-  addLeNetLayerMP(5 * k, 3, 1, 1, 1, fn, 0.0f); // no pooling, no dropout
-  addLeNetLayerMP(5 * k, 3, 1, 1, 1, fn, 0.0f); // no pooling, nodropout
-  addLeNetLayerMP(5 * k, 1, 1, 2, 2, fn, 0.1f); // max-pooling + dropout
-  addLeNetLayerMP(20 * k, 1, 1, 1, 1, fn, 0.35f); // fc + dropout
-  addLeNetLayerMP(20 * k, 1, 1, 1, 1, fn, 0.35f); // fc + dropout
-  addLeNetLayerMP(k, 1, 1, 1, 1, fn, 0.0f);
+  addLeNetLayerMP(k, 3, 1, 1, 1, fn, batchNorm, 0.0f); // no pooling, no dropout
+  addLeNetLayerMP(k, 3, 1, 2, 2, fn, batchNorm, 0.0f); // max-pooling + dropout
+  addLeNetLayerMP(2 * k, 3, 1, 1, 1, fn, batchNorm, 0.0f); // no pooling, no dropout
+  addLeNetLayerMP(2 * k, 3, 1, 2, 2, fn, batchNorm, 0.0f); // max-pooling + dropout
+  addLeNetLayerMP(4 * k, 3, 1, 1, 1, fn, batchNorm, 0.0f); // no pooling, no dropout
+  addLeNetLayerMP(4 * k, 3, 1, 1, 1, fn, batchNorm, 0.0f); // no pooling, no dropout
+  addLeNetLayerMP(4 * k, 3, 1, 2, 2, fn, batchNorm, 0.0f); // max-pooling + dropout
+//  addLeNetLayerMP(5 * k, 3, 1, 1, 1, fn, batchNorm, 0.0f); // no pooling, no dropout
+//  addLeNetLayerMP(5 * k, 3, 1, 1, 1, fn, batchNorm, 0.0f); // no pooling, no dropout
+//  addLeNetLayerMP(5 * k, 3, 1, 2, 2, fn, batchNorm, 0.1f); // max-pooling + dropout
+//  addLeNetLayerMP(5 * k, 3, 1, 1, 1, fn, batchNorm, 0.0f); // no pooling, no dropout
+//  addLeNetLayerMP(5 * k, 3, 1, 1, 1, fn, batchNorm, 0.0f); // no pooling, nodropout
+//  addLeNetLayerMP(5 * k, 1, 1, 2, 2, fn, batchNorm, 0.1f); // max-pooling + dropout
+//  addLeNetLayerMP(20 * k, 1, 1, 1, 1, fn, batchNorm, 0.35f); // fc + dropout
+  addLeNetLayerMP(5 * k, 1, 1, 1, 1, fn, batchNorm, 0.35f); // fc + dropout
+  addLeNetLayerMP(k, 1, 1, 1, 1, fn, batchNorm, 0.0f);
 
   // NiN-like
 //  addLeNetLayerMP(192, 5, 1, 1, 1, fn, 0); // no pooling
+//  addLeNetLayerMP(192, 1, 1, 1, 1, fn, 0); // no pooling
 //  addLeNetLayerMP(160, 1, 1, 1, 1, fn, 0); // no pooling
 //  addLeNetLayerMP(96, 1, 1, 3, 2, fn, 0.5); // max-pooling + dropout
   
@@ -62,14 +64,14 @@ int main(int lenArgs, char *args[]) {
   if (lenArgs > 1)
     int fold = atoi(args[1]);
   std::cout << "Fold: " << fold << std::endl;
-  SpatiallySparseDataset trainSet = FibroblastTrainSet(60, 10, fold);
+  SpatiallySparseDataset trainSet = FibroblastTrainSet(30, 10, fold);
   trainSet.summary();
-  trainSet.repeatSamples(15);
+  trainSet.repeatSamples(2);
   trainSet.summary();
-  SpatiallySparseDataset testSet = FibroblastTestSet(60, 10, fold);
+  SpatiallySparseDataset testSet = FibroblastTestSet(30, 10, fold);
   testSet.summary();
 
-  DeepC2Triangular cnn(3, 10, 32, VLEAKYRELU, trainSet.nFeatures,
+  DeepC2Triangular cnn(3, 10, 32, RELU, ON, trainSet.nFeatures,
                        trainSet.nClasses, 0.0f, cudaDevice);
   
   if (epoch > 0)
